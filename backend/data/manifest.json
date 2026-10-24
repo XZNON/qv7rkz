@@ -1,0 +1,27 @@
+{
+  "fetched_at": "2026-10-24T11:15:07+00:00",
+  "source": "https://data.elexon.co.uk/bmrs/api/v1",
+  "datasets": {
+    "WINDFOR": {
+      "query": "/datasets/WINDFOR/stream?publishDateTimeFrom=2025-11-28T00%3A00%3A00Z&publishDateTimeTo=2026-02-02T00%3A00%3A00Z",
+      "publish_time_range": [
+        "2025-11-28T02:30:00Z",
+        "2026-02-01T22:30:00Z"
+      ],
+      "runs": 528,
+      "file": "windfor.csv.gz",
+      "rows": 38544,
+      "sha256": "13fcbf692f7e386c6f3ffb8b2cd51c7e8bed9e34206d39d324da73ddca189507"
+    },
+    "FUELHH": {
+      "query": "/datasets/FUELHH/stream?settlementDateFrom=2025-11-28&settlementDateTo=2026-02-02&fuelType=WIND",
+      "start_time_range": [
+        "2025-11-28T00:00:00Z",
+        "2026-02-02T23:30:00Z"
+      ],
+      "file": "fuelhh_wind.csv.gz",
+      "rows": 3216,
+      "sha256": "2b585497fdcf86a079d0c0633caa02d1c0f7d633cb03c1d42e883ffb1dffda1c"
+    }
+  }
+}

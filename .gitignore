@@ -1,0 +1,21 @@
+# Research material and local tooling (not part of the submission)
+research_notes/
+reports/
+.claude/
+*.docx
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+frontend/dist/
+
+# Misc
+.vercel/
+.env
+.DS_Store
