@@ -1,1 +1,70 @@
 @import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Okabe-Ito palette: one colour = one meaning across every view. */
+  --color-forecast: #0072b2;
+  --color-actual: #111827;
+  --color-over: #d55e00;
+  --color-under: #56b4e9;
+  --color-good: #009e73;
+  --color-peak: #f0e442;
+
+  /* Elevation from layered shadows; structure keeps real borders. */
+  --shadow-border:
+    0px 0px 0px 1px oklch(0 0 0 / 0.06), 0px 1px 2px -1px oklch(0 0 0 / 0.06),
+    0px 2px 4px 0px oklch(0 0 0 / 0.04);
+  --shadow-border-hover:
+    0px 0px 0px 1px oklch(0 0 0 / 0.08), 0px 1px 2px -1px oklch(0 0 0 / 0.08),
+    0px 2px 4px 0px oklch(0 0 0 / 0.06);
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-slate-50 text-slate-900 antialiased;
+  }
+}
+
+/* Surface: shadow ring for depth, transparent border so forced-colors mode still draws an edge. */
+@utility surface {
+  border: 1px solid transparent;
+  box-shadow: var(--shadow-border);
+  background-color: white;
+}
+
+/* Pressed controls scale to 0.96 over 150ms; disabled ones never scale. */
+@utility press {
+  transition-property: scale, background-color, color, box-shadow;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+  &:not(:disabled):active {
+    scale: 0.96;
+  }
+}
+
+/* Staged entrance for a view's first load only. Hidden state lives in the keyframe,
+   so content stays visible if the animation never runs. Reduced motion keeps opacity only. */
+@utility enter {
+  animation: fade-in 300ms ease-out both;
+  @media (prefers-reduced-motion: no-preference) {
+    animation-name: fade-in-up;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+    filter: blur(4px);
+  }
+}
