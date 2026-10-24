@@ -219,9 +219,8 @@ What each dataset covers, the selection rule, alignment, sign convention, the st
 │   ├── scripts/fetch_data.py
 │   └── tests/
 ├── frontend/                # Vite + React + TS
-├── api/index.py             # Vercel Python entry, re-exports backend app
-├── requirements.txt         # Python deps (Vercel + Docker)
-├── vercel.json
+├── requirements.txt         # Python runtime deps (Docker image)
+├── vercel.json              # Vercel service: runs the Dockerfile as a container
 ├── Dockerfile               # multi-stage: build frontend, serve with FastAPI
 ├── docker-compose.yml
 ├── .github/workflows/ci.yml # pytest + ruff + frontend typecheck/build
@@ -235,10 +234,11 @@ What each dataset covers, the selection rule, alignment, sign convention, the st
 
 ## 8. Deployment and Docker
 
-- **Live:** Vercel. Frontend built as static files; `api/index.py` runs FastAPI as a Python function; `vercel.json` rewrites `/api/*` to it and includes `backend/data/**` in the function bundle.
-- **Docker:** one multi-stage image (Node builds the frontend → `python:3.12-slim` serves API + static files). `docker compose up` → app on `http://localhost:8000`. Same code path as Vercel except static serving.
-- `tzdata` in requirements (slim images and serverless lack a system tz database).
-- **De-risk early:** deploy the skeleton (health endpoint + placeholder page) to Vercel in the first build session, before features. Risk: pandas bundle size / cold start on Vercel. Fallback: precompute preset cutoffs to JSON at build time.
+- **Docker:** one multi-stage image (Node builds the frontend → `python:3.12-slim` serves API + static files from one origin). `docker compose up` → app on `http://localhost:8000`.
+- **Live:** Vercel Services (Beta) with the container runtime. `vercel.json` defines one service, `app`, built from the same `Dockerfile`, and routes every path to it. The live site runs the exact image used locally.
+- Vercel routes container traffic to port 80 unless the `PORT` environment variable is set in project settings. The image runs as a non-root user on `${PORT:-8000}`, so the Vercel project sets `PORT=8000`.
+- `tzdata` in requirements (slim images lack a system tz database).
+- **De-risk early:** deploy the skeleton (health endpoint + placeholder page) to Vercel in the first build session, before features. Fallback if the container runtime fails: two Vercel services (Vite static frontend + FastAPI Python runtime), Docker kept for local runs.
 - Final check: open the live URL, repo and video in an incognito window.
 
 ---
