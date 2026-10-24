@@ -84,7 +84,7 @@ export function DayChart({
               x1={peakStart}
               x2={peakEnd}
               fill={colors.peak}
-              fillOpacity={0.22}
+              fillOpacity={0.05}
               label={{
                 value: 'Evening peak',
                 position: 'insideTop',
@@ -207,7 +207,7 @@ function ChartTooltip({ day, x, showActual }: { day: DayView; x: number; showAct
   if (!hour) return null
   const end = tickLabel(minutes(hour.local_time) + 60)
   return (
-    <div className="surface max-w-72 rounded-xl px-3 py-2.5 text-sm shadow-lg">
+    <div className="popover max-w-72 rounded-xl px-3 py-2.5 text-sm">
       <div className="font-semibold tabular-nums">
         {hour.local_time}–{end}{' '}
         <span className="font-normal text-slate-500">

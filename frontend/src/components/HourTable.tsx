@@ -1,7 +1,9 @@
-import { Download } from 'lucide-react'
+import { ChevronDown, Download } from 'lucide-react'
+import { useState, type CSSProperties } from 'react'
 
 import type { DayView } from '../api/types'
 import { gw, signedGw } from '../lib/format'
+import { Card } from './ui'
 
 function toCsv(day: DayView, showActual: boolean): string {
   const header = [
@@ -41,66 +43,88 @@ function download(day: DayView, showActual: boolean) {
   URL.revokeObjectURL(url)
 }
 
-export function HourTable({ day, showActual }: { day: DayView; showActual: boolean }) {
+const ghostButton =
+  'press flex items-center gap-1.5 rounded-lg ps-2.5 pe-3 py-1.5 text-sm text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+
+export function HourTable({
+  day,
+  showActual,
+  style,
+}: {
+  day: DayView
+  showActual: boolean
+  style?: CSSProperties
+}) {
+  const [open, setOpen] = useState(false)
   return (
-    <details className="group">
-      <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-[15px] font-semibold text-slate-900">
-        <span>
-          Hour-by-hour table
-          <span className="ms-2 text-sm font-normal text-slate-500 group-open:hidden">Show</span>
-        </span>
-        <button
-          type="button"
-          onClick={(e) => {
-            e.preventDefault()
-            download(day, showActual)
-          }}
-          className="press flex items-center gap-1.5 rounded-lg ps-2.5 pe-3 py-1.5 text-sm font-normal text-slate-600 hover:bg-slate-100 hover:text-slate-900"
-        >
-          <Download size={16} strokeWidth={1.5} absoluteStrokeWidth aria-hidden />
-          CSV
-        </button>
-      </summary>
-      <div className="mt-4 overflow-x-auto">
-        <table className="w-full text-sm tabular-nums">
-          <thead className="text-left text-xs text-slate-500">
-            <tr className="border-b border-slate-200">
-              <th className="py-2 pe-4 font-medium">UK time</th>
-              <th className="py-2 pe-4 font-medium">SP</th>
-              <th className="py-2 pe-4 text-end font-medium">Forecast</th>
-              <th className="py-2 pe-4 text-end font-medium">Expected</th>
-              <th className="py-2 pe-4 text-end font-medium">80% range</th>
-              <th className="py-2 pe-4 text-end font-medium">Change vs previous</th>
-              {showActual && <th className="py-2 pe-4 text-end font-medium">Actual</th>}
-              {showActual && <th className="py-2 pe-4 text-end font-medium">Error</th>}
-            </tr>
-          </thead>
-          <tbody>
-            {day.hours.map((h) => (
-              <tr key={h.start_time} className="border-b border-slate-100 last:border-0">
-                <td className="py-1.5 pe-4">{h.local_time}</td>
-                <td className="py-1.5 pe-4 text-slate-500">{h.settlement_period}</td>
-                <td className="py-1.5 pe-4 text-end">{gw(h.forecast_mw)}</td>
-                <td className="py-1.5 pe-4 text-end font-medium">{gw(h.adjusted_mw)}</td>
-                <td className="py-1.5 pe-4 text-end text-slate-600">
-                  {gw(h.band_low_mw)} – {gw(h.band_high_mw)}
-                </td>
-                <td className="py-1.5 pe-4 text-end text-slate-600">{signedGw(h.revision_mw)}</td>
-                {showActual && <td className="py-1.5 pe-4 text-end">{gw(h.actual_mw)}</td>}
-                {showActual && (
-                  <td
-                    className={`py-1.5 pe-4 text-end ${
-                      (h.error_mw ?? 0) > 0 ? 'text-over' : 'text-sky-700'
-                    }`}
-                  >
-                    {signedGw(h.error_mw)}
-                  </td>
-                )}
+    <Card
+      className="enter"
+      style={style}
+      title="Hour by hour"
+      subtitle="Every delivery hour with its forecast, expected value and range."
+      action={
+        <div className="flex gap-1">
+          <button
+            type="button"
+            aria-expanded={open}
+            aria-controls="hour-table"
+            onClick={() => setOpen(!open)}
+            className={ghostButton}
+          >
+            <ChevronDown
+              size={16}
+              strokeWidth={1.5}
+              absoluteStrokeWidth
+              aria-hidden
+              className={open ? 'rotate-180' : ''}
+            />
+            {open ? 'Hide table' : 'Show table'}
+          </button>
+          <button type="button" onClick={() => download(day, showActual)} className={ghostButton}>
+            <Download size={16} strokeWidth={1.5} absoluteStrokeWidth aria-hidden />
+            CSV
+          </button>
+        </div>
+      }
+    >
+      {open && (
+        <div id="hour-table" className="overflow-x-auto">
+          <table className="w-full text-sm tabular-nums">
+            <thead className="text-left text-xs text-slate-500">
+              <tr className="border-b border-slate-200">
+                <th className="py-2 pe-4 font-medium">UK time</th>
+                <th className="py-2 pe-4 font-medium">SP</th>
+                <th className="py-2 pe-4 text-end font-medium">Forecast</th>
+                <th className="py-2 pe-4 text-end font-medium">Expected</th>
+                <th className="py-2 pe-4 text-end font-medium">80% range</th>
+                <th className="py-2 pe-4 text-end font-medium">Change vs previous</th>
+                {showActual && <th className="py-2 pe-4 text-end font-medium">Actual</th>}
+                {showActual && <th className="py-2 pe-4 text-end font-medium">Error</th>}
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </details>
+            </thead>
+            <tbody>
+              {day.hours.map((h) => (
+                <tr key={h.start_time} className="border-b border-slate-100 last:border-0">
+                  <td className="py-1.5 pe-4">{h.local_time}</td>
+                  <td className="py-1.5 pe-4 text-slate-500">{h.settlement_period}</td>
+                  <td className="py-1.5 pe-4 text-end">{gw(h.forecast_mw)}</td>
+                  <td className="py-1.5 pe-4 text-end font-medium">{gw(h.adjusted_mw)}</td>
+                  <td className="py-1.5 pe-4 text-end text-slate-600">
+                    {gw(h.band_low_mw)} – {gw(h.band_high_mw)}
+                  </td>
+                  <td className="py-1.5 pe-4 text-end text-slate-600">{signedGw(h.revision_mw)}</td>
+                  {showActual && <td className="py-1.5 pe-4 text-end">{gw(h.actual_mw)}</td>}
+                  {showActual && (
+                    <td className={`py-1.5 pe-4 text-end ${(h.error_mw ?? 0) > 0 ? 'text-over-text' : 'text-sky-700'}`}>
+                      {signedGw(h.error_mw)}
+                    </td>
+                  )}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </Card>
   )
 }

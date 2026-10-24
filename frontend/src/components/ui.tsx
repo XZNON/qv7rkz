@@ -1,5 +1,6 @@
 import type { CSSProperties, ReactNode } from 'react'
 
+/** The one container for content: same radius, padding and header style everywhere. */
 export function Card({
   title,
   subtitle,
@@ -18,46 +19,54 @@ export function Card({
   return (
     <section className={`surface rounded-2xl p-5 ${className}`} style={style}>
       {(title || action) && (
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div>
-            {title && <h2 className="text-[15px] font-semibold text-slate-900">{title}</h2>}
-            {subtitle && <p className="mt-0.5 text-sm text-slate-500">{subtitle}</p>}
+        <header className="mb-4 flex flex-wrap items-start justify-between gap-3">
+          <div className="min-w-0">
+            {title && <h2 className="text-sm font-semibold text-slate-900">{title}</h2>}
+            {subtitle && <p className="mt-0.5 text-[13px] text-slate-500">{subtitle}</p>}
           </div>
           {action}
-        </div>
+        </header>
       )}
-      <div className={title || action ? 'mt-4' : ''}>{children}</div>
+      {children}
     </section>
   )
 }
 
-export function Tile({
-  label,
-  value,
-  detail,
-  tone = 'default',
-  style,
-}: {
+export type StatItem = {
   label: string
   value: ReactNode
   detail?: ReactNode
   tone?: 'default' | 'warn' | 'good'
-  style?: CSSProperties
-}) {
-  const marker = {
-    default: 'bg-slate-300',
-    warn: 'bg-over',
-    good: 'bg-good',
-  }[tone]
+}
+
+/** A row of figures inside a card, separated by rules rather than separate surfaces. */
+export function StatRow({ items, className = '' }: { items: StatItem[]; className?: string }) {
+  const columns = items.length === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-4'
   return (
-    <div className="surface enter rounded-2xl p-4" style={style}>
-      <div className="flex items-center gap-2 text-xs font-medium tracking-wide text-slate-500 uppercase">
-        <span aria-hidden className={`size-1.5 rounded-full ${marker}`} />
-        {label}
-      </div>
-      <div className="mt-1.5 text-2xl font-semibold text-slate-900 tabular-nums">{value}</div>
-      {detail && <div className="mt-1 text-sm text-slate-600">{detail}</div>}
-    </div>
+    <dl className={`grid grid-cols-2 gap-x-6 gap-y-4 ${columns} ${className}`}>
+      {items.map((item) => (
+        <div key={item.label} className="min-w-0 lg:border-s lg:border-slate-200 lg:ps-6 lg:first:border-s-0 lg:first:ps-0">
+          <dt className="flex items-center gap-1.5 text-xs font-medium text-slate-500">
+            {item.tone && item.tone !== 'default' && (
+              <span aria-hidden className={`size-1.5 rounded-full ${item.tone === 'warn' ? 'bg-over' : 'bg-good'}`} />
+            )}
+            {item.label}
+          </dt>
+          <dd className="mt-1 text-2xl font-semibold text-slate-900 tabular-nums">{item.value}</dd>
+          {item.detail && <dd className="mt-0.5 text-[13px] text-slate-500">{item.detail}</dd>}
+        </div>
+      ))}
+    </dl>
+  )
+}
+
+/** Labelled group inside the sidebar. */
+export function SideSection({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <section>
+      <h2 className="mb-2.5 text-xs font-semibold tracking-wide text-slate-500 uppercase">{title}</h2>
+      {children}
+    </section>
   )
 }
 
@@ -94,40 +103,37 @@ export function Badge({
   )
 }
 
-/** Segmented control: outer radius 12px = inner 8px + 4px padding. */
-export function Segmented<T extends string>({
-  label,
-  options,
-  value,
+/** On/off switch. Track colour and knob position are both static cues; motion is optional. */
+export function Switch({
+  checked,
   onChange,
+  label,
 }: {
+  checked: boolean
+  onChange: (checked: boolean) => void
   label: string
-  options: { value: T; label: ReactNode; title?: string }[]
-  value: T
-  onChange: (value: T) => void
 }) {
   return (
-    <div role="radiogroup" aria-label={label} className="inline-flex rounded-xl bg-slate-100 p-1">
-      {options.map((option) => {
-        const selected = option.value === value
-        return (
-          <button
-            key={option.value}
-            type="button"
-            role="radio"
-            aria-checked={selected}
-            title={option.title}
-            onClick={() => onChange(option.value)}
-            className={`press rounded-lg px-3 py-1.5 text-sm font-medium ${
-              selected
-                ? 'bg-white text-slate-900 shadow-[var(--shadow-border)]'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            {option.label}
-          </button>
-        )
-      })}
-    </div>
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      onClick={() => onChange(!checked)}
+      className="press flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-start text-sm font-medium text-slate-800 hover:bg-slate-100"
+    >
+      {label}
+      <span
+        aria-hidden
+        className={`relative h-5 w-9 shrink-0 rounded-full transition-[background-color] duration-150 ${
+          checked ? 'bg-slate-900' : 'bg-slate-300'
+        }`}
+      >
+        <span
+          className={`absolute top-0.5 left-0.5 size-4 rounded-full bg-white shadow-sm motion-safe:transition-[translate] motion-safe:duration-150 motion-safe:ease-out ${
+            checked ? 'translate-x-4' : 'translate-x-0'
+          }`}
+        />
+      </span>
+    </button>
   )
 }

@@ -7,17 +7,20 @@
   --color-forecast: #0072b2;
   --color-actual: #111827;
   --color-over: #d55e00;
+  --color-over-text: #a84a00; /* over-forecast colour darkened for small text (4.9:1) */
   --color-under: #56b4e9;
   --color-good: #009e73;
-  --color-peak: #f0e442;
+
+  /* Form-control edges need 3:1 against white; this is 3.7:1. */
+  --color-input: #7c8799;
 
   /* Elevation from layered shadows; structure keeps real borders. */
   --shadow-border:
     0px 0px 0px 1px oklch(0 0 0 / 0.06), 0px 1px 2px -1px oklch(0 0 0 / 0.06),
     0px 2px 4px 0px oklch(0 0 0 / 0.04);
-  --shadow-border-hover:
-    0px 0px 0px 1px oklch(0 0 0 / 0.08), 0px 1px 2px -1px oklch(0 0 0 / 0.08),
-    0px 2px 4px 0px oklch(0 0 0 / 0.06);
+  --shadow-popover:
+    0px 0px 0px 1px oklch(0 0 0 / 0.08), 0px 4px 8px -2px oklch(0 0 0 / 0.08),
+    0px 12px 24px -4px oklch(0 0 0 / 0.1);
 }
 
 @layer base {
@@ -33,6 +36,12 @@
 @utility surface {
   border: 1px solid transparent;
   box-shadow: var(--shadow-border);
+  background-color: white;
+}
+
+@utility popover {
+  border: 1px solid transparent;
+  box-shadow: var(--shadow-popover);
   background-color: white;
 }
 

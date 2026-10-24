@@ -17,15 +17,15 @@ export function Header({
   onAbout: () => void
 }) {
   return (
-    <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/85 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3 sm:px-6">
-        <div className="flex items-center gap-2.5">
+    <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/90 backdrop-blur">
+      <div className="flex min-h-14 flex-wrap items-center gap-x-6 gap-y-2 px-4 py-2 sm:px-5">
+        <div className="flex items-center gap-2.5 lg:w-[calc(19rem-2.5rem)]">
           <span className="grid size-8 place-items-center rounded-lg bg-forecast text-white">
             <Wind size={18} strokeWidth={2} absoluteStrokeWidth aria-hidden />
           </span>
           <div className="leading-tight">
-            <div className="text-[15px] font-semibold">Day-ahead Wind Cockpit</div>
-            <div className="text-xs text-slate-500">GB national wind · January 2026 pilot</div>
+            <div className="text-sm font-semibold">Day-ahead Wind Cockpit</div>
+            <div className="text-xs text-slate-500">GB national wind · Jan 2026 pilot</div>
           </div>
         </div>
 

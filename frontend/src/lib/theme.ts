@@ -8,7 +8,7 @@ export const colors = {
   actual: '#111827', // metered actual: black, solid
   over: '#D55E00', // over-forecast (buyer short): vermilion
   under: '#56B4E9', // under-forecast (buyer long): sky blue
-  peak: '#F0E442', // evening peak window
+  peak: '#0F172A', // evening peak window: neutral tint, labelled
   grid: '#E5E7EB',
   muted: '#6B7280',
 } as const
