@@ -134,7 +134,7 @@ export function DayChart({
                   type="stepAfter"
                   stroke="none"
                   fill={colors.over}
-                  fillOpacity={0.3}
+                  fillOpacity={0.18}
                   isAnimationActive={false}
                   activeDot={false}
                 />
@@ -143,7 +143,7 @@ export function DayChart({
                   type="stepAfter"
                   stroke="none"
                   fill={colors.under}
-                  fillOpacity={0.35}
+                  fillOpacity={0.25}
                   isAnimationActive={false}
                   activeDot={false}
                 />
@@ -243,7 +243,7 @@ function ChartTooltip({ day, x, showActual }: { day: DayView; x: number; showAct
 function Swatch({ kind }: { kind: 'dashed' | 'solid' | 'thin' | 'band' | 'actual' | 'over' | 'under' }) {
   if (kind === 'band' || kind === 'over' || kind === 'under') {
     const fill = { band: colors.band, over: colors.over, under: colors.under }[kind]
-    const opacity = { band: 0.2, over: 0.35, under: 0.4 }[kind]
+    const opacity = { band: 0.2, over: 0.25, under: 0.32 }[kind]
     return (
       <svg width="22" height="12" aria-hidden>
         <rect width="22" height="12" rx="2" fill={fill} fillOpacity={opacity} />

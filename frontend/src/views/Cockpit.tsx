@@ -6,7 +6,7 @@ import { CutoffPicker, DayPicker } from '../components/Pickers'
 import { Shell } from '../components/Shell'
 import { SignalList } from '../components/SignalList'
 import { Card, ErrorBox, SideSection, Skeleton, StatRow, Switch } from '../components/ui'
-import { clock, dateLabel, dayLabel, duration, errorInWords, gw, signedGw } from '../lib/format'
+import { clock, dateLabel, dayLabel, duration, errorInWords, gw, shortDate, signedGw } from '../lib/format'
 import { stagger } from '../lib/motion'
 import type { UrlState } from '../lib/urlState'
 
@@ -32,7 +32,7 @@ export function Cockpit({
       </SideSection>
       <SideSection title="Hindsight">
         <Switch
-          label="Show what actually happened"
+          label="Show what happened"
           checked={state.actual}
           onChange={(actual) => update({ actual })}
         />
@@ -155,7 +155,7 @@ function ForecastUsed({ day }: { day: DayView }) {
     ['Previous run', clock(day.previous_run_publish_time)],
     [
       'Range learned from',
-      `${dateLabel(day.calibration.train_from)} – ${dateLabel(day.calibration.train_to)}`,
+      `${shortDate(day.calibration.train_from)} – ${shortDate(day.calibration.train_to)}`,
     ],
   ]
   return (

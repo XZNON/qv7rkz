@@ -67,7 +67,7 @@ export function DayPicker({
                 selected ? 'bg-slate-900 font-semibold text-white' : 'text-slate-700 hover:bg-slate-100'
               }`}
             >
-              {day.endsWith('-01') && day > first ? `${label} Feb` : label}
+              {label}
             </button>
           )
         })}

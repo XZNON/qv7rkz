@@ -41,6 +41,11 @@ export const clock = (iso: string | null | undefined): string =>
 /** "Tue 27 Jan" in UK time. */
 export const dayLabel = (iso: string): string => ukDay.format(new Date(iso))
 
+const ukShortDay = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' })
+
+/** Calendar date "2026-01-28" as "28 Jan". */
+export const shortDate = (day: string): string => ukShortDay.format(new Date(`${day}T12:00:00Z`))
+
 /** Delivery day "2026-01-28" (a calendar date, no time zone) as "Wed 28 Jan". */
 export const dateLabel = (day: string): string => ukDay.format(new Date(`${day}T12:00:00Z`))
 
