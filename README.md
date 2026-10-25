@@ -3,7 +3,7 @@
 A pilot web app for a UK utility's day-ahead power purchasing team. For every delivery day in January 2026 it replays the national wind forecast the team could actually have seen at the day-ahead decision time, shows how far to trust it, and scores it against metered wind.
 
 - **Live app:** https://qv7rkz.vercel.app
-- **Video walkthrough:** _link to be added_
+- **Video walkthrough:** https://youtu.be/Ttg9NOSR3Es
 
 ## What it shows
 
