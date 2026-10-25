@@ -88,24 +88,21 @@ python backend/scripts/fetch_data.py
 ## Architecture
 
 ```mermaid
-flowchart LR
-    E["Elexon BMRS API<br/>WINDFOR + FUELHH"] -- "fetch_data.py<br/>(run once)" --> D[("backend/data<br/>cached csv.gz + manifest")]
-
-    subgraph IMG["Docker image (same locally and on Vercel)"]
-        direction LR
-        subgraph BE["FastAPI backend"]
-            direction TB
-            S["selection.py<br/>latest run before decision"] --> M["metrics.py<br/>hourly alignment, errors"]
-            M --> C["calibration.py<br/>rolling 30-day error bins"]
-            C --> G["signals.py<br/>flags + back-test"]
-            G --> A["analysis.py<br/>cached per decision time"]
-            A --> V["views.py + schemas.py<br/>/api/day · /api/scorecard · /api/signals"]
-        end
-        UI["React + TypeScript + Recharts<br/>Decision view · January scorecard"]
-    end
-
+flowchart TB
+    E["Elexon BMRS API<br/>WINDFOR + FUELHH"] -- "fetch_data.py (run once)" --> D[("backend/data<br/>cached csv.gz + manifest")]
     D --> S
-    V -- "JSON" --> UI
+
+    subgraph IMG["Docker image: same locally and on Vercel"]
+        subgraph BE["FastAPI backend: pure, tested functions"]
+            direction LR
+            S["selection.py<br/>latest run<br/>before decision"] --> M["metrics.py<br/>alignment,<br/>errors"]
+            M --> C["calibration.py<br/>rolling 30-day<br/>error bins"]
+            C --> G["signals.py<br/>flags +<br/>back-test"]
+            G --> A["analysis.py<br/>cached per<br/>decision time"]
+        end
+        A --> V["views.py + schemas.py<br/>/api/day · /api/scorecard · /api/signals"]
+        V -- "JSON" --> UI["React + TypeScript + Recharts<br/>Decision view · January scorecard"]
+    end
 ```
 
 The backend is a pipeline of small, pure, tested functions; `analysis.py` runs it once per decision time and caches the result. The Dockerfile builds the frontend in a Node stage and serves it from the FastAPI app, so the browser, the API and the data share one origin.
