@@ -90,7 +90,6 @@ python backend/scripts/fetch_data.py
 ```mermaid
 flowchart TB
     E["Elexon BMRS API<br/>WINDFOR + FUELHH"] -- "fetch_data.py (run once)" --> D[("backend/data<br/>cached csv.gz + manifest")]
-    D --> S
 
     subgraph IMG["Docker image: same locally and on Vercel"]
         subgraph BE["FastAPI backend: pure, tested functions"]
@@ -100,9 +99,10 @@ flowchart TB
             C --> G["signals.py<br/>flags +<br/>back-test"]
             G --> A["analysis.py<br/>cached per<br/>decision time"]
         end
-        A --> V["views.py + schemas.py<br/>/api/day · /api/scorecard · /api/signals"]
+        BE --> V["views.py + schemas.py<br/>/api/day · /api/scorecard · /api/signals"]
         V -- "JSON" --> UI["React + TypeScript + Recharts<br/>Decision view · January scorecard"]
     end
+    D --> BE
 ```
 
 The backend is a pipeline of small, pure, tested functions; `analysis.py` runs it once per decision time and caches the result. The Dockerfile builds the frontend in a Node stage and serves it from the FastAPI app, so the browser, the API and the data share one origin.
