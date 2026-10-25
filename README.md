@@ -85,6 +85,31 @@ python backend/scripts/fetch_data.py
 └── requirements-dev.txt     Plus test and lint tools
 ```
 
+## Architecture
+
+```mermaid
+flowchart LR
+    E["Elexon BMRS API<br/>WINDFOR + FUELHH"] -- "fetch_data.py<br/>(run once)" --> D[("backend/data<br/>cached csv.gz + manifest")]
+
+    subgraph IMG["Docker image (same locally and on Vercel)"]
+        direction LR
+        subgraph BE["FastAPI backend"]
+            direction TB
+            S["selection.py<br/>latest run before decision"] --> M["metrics.py<br/>hourly alignment, errors"]
+            M --> C["calibration.py<br/>rolling 30-day error bins"]
+            C --> G["signals.py<br/>flags + back-test"]
+            G --> A["analysis.py<br/>cached per decision time"]
+            A --> V["views.py + schemas.py<br/>/api/day · /api/scorecard · /api/signals"]
+        end
+        UI["React + TypeScript + Recharts<br/>Decision view · January scorecard"]
+    end
+
+    D --> S
+    V -- "JSON" --> UI
+```
+
+The backend is a pipeline of small, pure, tested functions; `analysis.py` runs it once per decision time and caches the result. The Dockerfile builds the frontend in a Node stage and serves it from the FastAPI app, so the browser, the API and the data share one origin.
+
 ## How it works
 
 1. **Data.** Elexon BMRS `WINDFOR` (national wind forecast, hourly, 8 runs a day, each with a `publishTime`) and `FUELHH` with `fuelType=WIND` (metered output, half-hourly). Fetched once for 28 Nov 2025 – 2 Feb 2026 and committed; the app never calls Elexon at runtime. No other data are used.

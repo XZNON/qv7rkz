@@ -19,3 +19,6 @@ frontend/dist/
 .vercel/
 .env
 .DS_Store
+
+# Personal recording notes (not part of the submission)
+video/
